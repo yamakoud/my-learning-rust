@@ -1,5 +1,5 @@
 trait Executable {
-    fn execute(&self);
+    fn execute(&self) -> Result<String, &'static str>;
 }
 
 enum Message {
@@ -7,17 +7,19 @@ enum Message {
     Move { x: i32, y: i32 },
     Write { text: String },
     ChangeColor { red: u8, green: u8, blue: u8 },
+    Other,
 }
 
 impl Executable for Message {
-    fn execute(&self) {
+    fn execute(&self) -> Result<String, &'static str> {
         match self {
-            Message::Quit => println!("Quit"),
-            Message::Move { x, y } => println!("Move to ({}, {})", x, y),
-            Message::Write { text } => println!("Write {}", text),
+            Message::Quit => Ok("Quit".to_string()),
+            Message::Move { x, y } => Ok(format!("Move to ({}, {})", x, y)),
+            Message::Write { text } => Ok(format!("Write {}", text)),
             Message::ChangeColor { red, green, blue } => {
-                println!("Change color to ({}, {}, {})", red, green, blue)
+                Ok(format!("Change color to ({}, {}, {})", red, green, blue))
             }
+            _ => Err("Not implemented"),
         }
     }
 }
@@ -34,9 +36,13 @@ pub fn main() {
             green: 0,
             blue: 0,
         },
+        Message::Other,
     ];
 
     for message in messages {
-        message.execute();
+        match message.execute() {
+            Ok(result) => println!("{}", result),
+            Err(error) => println!("{}", error),
+        }
     }
 }
