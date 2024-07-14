@@ -1,7 +1,7 @@
 mod mains {
-    pub mod v6;
+    pub mod v7;
 }
 
 fn main() {
-    mains::v6::main();
+    mains::v7::main();
 }
